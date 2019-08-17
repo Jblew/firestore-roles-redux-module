@@ -1,13 +1,19 @@
 // tslint:disable class-name
 
 export interface EpicActions {
+    initialize(): EpicActions.InitializeAction;
     logout(): EpicActions.LogoutAction;
     checkRole(): EpicActions.CheckRoleAction;
 }
 
 export namespace EpicActions {
+    export const INITIALIZE = "FirestoreRolesAuthReduxModule/PrivateEpicActions/INITIALIZE";
     export const LOGOUT = "FirestoreRolesAuthReduxModule/EpicActions/LOGOUT";
     export const CHECK_ROLE = "FirestoreRolesAuthReduxModule/EpicActions/CHECK_ROLE";
+
+    export interface InitializeAction {
+        type: typeof INITIALIZE;
+    }
 
     export interface LogoutAction {
         type: typeof LOGOUT;
@@ -18,5 +24,5 @@ export namespace EpicActions {
         role: string;
     }
 
-    export type Type = LogoutAction | CheckRoleAction;
+    export type Type = InitializeAction | LogoutAction | CheckRoleAction;
 }
