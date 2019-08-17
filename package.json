@@ -22,7 +22,7 @@
     "lodash": "^4.17.15",
     "ow": "^0.13.2",
     "redux": "^4.0.4",
-    "redux-dynamic-modules": "^5.0.2",
+    "redux-thunk": "^2.3.0",
     "typesafe-actions": "^4.4.2"
   },
   "devDependencies": {
