@@ -1,8 +1,18 @@
 // tslint:disable class-name
+import { ThunkAction } from "redux-thunk";
+
 import { Account } from "../../Account";
+import { State } from "../State";
 
 export interface PrivateEpicActions {
-    ensureAccountRegistered(account: Account): PrivateEpicActions.EnsureAccountRegisteredAction;
+    ensureAccountRegistered(
+        account: Account,
+    ): ThunkAction<
+        PrivateEpicActions.EnsureAccountRegisteredAction,
+        State,
+        void,
+        PrivateEpicActions.EnsureAccountRegisteredAction
+    >;
 }
 
 export namespace PrivateEpicActions {

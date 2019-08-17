@@ -1,9 +1,12 @@
 // tslint:disable class-name
+import { ThunkAction } from "redux-thunk";
+
+import { State } from "../State";
 
 export interface EpicActions {
-    initialize(): EpicActions.InitializeAction;
-    logout(): EpicActions.LogoutAction;
-    checkRole(): EpicActions.CheckRoleAction;
+    initialize(): ThunkAction<EpicActions.InitializeAction, State, void, EpicActions.InitializeAction>;
+    logout(): ThunkAction<EpicActions.LogoutAction, State, void, EpicActions.LogoutAction>;
+    checkRole(role: string): ThunkAction<EpicActions.CheckRoleAction, State, void, EpicActions.CheckRoleAction>;
 }
 
 export namespace EpicActions {
