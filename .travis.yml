@@ -1,0 +1,13 @@
+dist: xenial
+language: node_js
+
+branches:
+    except:
+        - /^v[0-9]/
+
+install:
+    - npm ci
+
+script:
+    - npm run build
+
