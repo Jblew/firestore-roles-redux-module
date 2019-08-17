@@ -1,46 +1,25 @@
-import ow from "ow";
+import { IModule } from "redux-dynamic-modules";
 
-import { Account } from "../Account";
-import { ow_catch } from "../util";
+import { Account as _Account } from "../Account";
+import { AuthState as _AuthState } from "../AuthState";
+import { Configuration } from "../Configuration";
+
+import { State as _State } from "./State";
 
 export namespace RolesAuthModule {
-    export interface State {
-        state: AuthState;
-        account?: Account;
-        roles: {
-            [roleName: string]: boolean;
+    export import Account = _Account;
+    export import AuthState = _AuthState;
+    export import State = _State;
+
+    export function getModule(config: Configuration): IModule<RolesAuthModule.State> {
+        return {
+            id: "rolesAuth",
+            reducerMap: {
+                rolesAuth: rolesReducer,
+            },
+            // Actions to fire when this module is added/removed
+            // initialActions: [],
+            // finalActions: []
         };
-        roleRequests: {
-            [roleName: string]: boolean;
-        };
-    }
-
-    export namespace State {
-        export function validate(state: State) {
-            ow(
-                state.state,
-                "state.state",
-                ow.string.oneOf([AuthState.LOADING, AuthState.AUTHENTICATED, AuthState.NOTAUTHENTICATED]),
-            );
-
-            ow(
-                state.account,
-                "state.account",
-                ow.any(ow.undefined, ow.object.is(v => ow_catch(() => Account.validate(v as Account)))),
-            );
-
-            ow(state.roles, "state.roles", ow.object.valuesOfType(ow.boolean));
-            ow(state.roleRequests, "state.roleRequests", ow.object.valuesOfType(ow.boolean));
-        }
-    }
-
-    /**
-     *
-     * AuthState
-     */
-    export enum AuthState {
-        LOADING = "LOADING",
-        AUTHENTICATED = "AUTHENTICATED",
-        NOTAUTHENTICATED = "NOTAUTHENTICATED",
     }
 }
