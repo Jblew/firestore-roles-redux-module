@@ -106,7 +106,7 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
                 }
             })();
             return this.ensureAccountRegisteredActionIntent(account);
-        });
+        };
     }
 
     private onAuthenticated(dispatch: Dispatch, user: firebase.UserInfo) {
