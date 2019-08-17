@@ -1,4 +1,4 @@
-import { Reducer } from "typesafe-actions";
+import * as firebase from "firebase/app";
 
 import { Account as _Account } from "../Account";
 import { AuthState as _AuthState } from "../AuthState";
@@ -16,8 +16,12 @@ export namespace RolesAuthModule {
     export type PublicActions = EpicActions;
     export type PublicActionType = EpicActions.Type;
 
-    export function getModule(config: Configuration) {
-        const publicActions = new EpicActionsImpl();
+    export function getModule(
+        config: Configuration,
+        firebaseAuth: firebase.auth.Auth,
+        firestore: firebase.firestore.Firestore,
+    ) {
+        const publicActions = new EpicActionsImpl(config, firebaseAuth, firestore);
         return {
             reducer: rootReducer,
             actions: publicActions,
