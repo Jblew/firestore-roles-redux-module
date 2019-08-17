@@ -20,5 +20,5 @@ export namespace PrivateEpicActions {
         account: Account;
     }
 
-    export type Types = InitializeAction | EnsureAccountRegisteredAction;
+    export type Type = InitializeAction | EnsureAccountRegisteredAction;
 }

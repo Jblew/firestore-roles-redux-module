@@ -1,6 +1,6 @@
-import { Account } from "../../Account";
+import { action, ActionType, createAction } from "typesafe-actions";
 
-// tslint:disable class-name
+import { Account } from "../../Account";
 
 export namespace PlainActions {
     export const AUTH_LOADING = "FirestoreRolesAuthReduxModule/PlainActions/AUTH_LOADING";
@@ -10,68 +10,15 @@ export namespace PlainActions {
     export const SET_ROLE_STATUS = "FirestoreRolesAuthReduxModule/PlainActions/SET_ROLE_STATUS";
     export const SET_ROLE_REQUEST_STATUS = "FirestoreRolesAuthReduxModule/PlainActions/SET_ROLE_REQUEST_STATUS";
 
-    export interface AuthLoading {
-        type: typeof AUTH_LOADING;
+    export namespace Actions {
+        export const authLoading = () => action(AUTH_LOADING);
+        export const authSuccess = (account: Account) => action(AUTH_SUCCESS, account);
+        export const authFailure = (error: string) => action(AUTH_FAILURE, error);
+        export const authNotAuthenticated = () => action(AUTH_NOTAUTHENTICATED);
+        export const setRoleStatus = (role: string, hasRole: boolean) => action(SET_ROLE_STATUS, { role, hasRole });
+        export const setRoleRequestStatus = (role: string, isRequestingRole: boolean) =>
+            action(SET_ROLE_STATUS, { role, isRequestingRole });
     }
 
-    export interface AuthSuccess {
-        type: typeof AUTH_SUCCESS;
-        account: Account;
-    }
-
-    export interface AuthFailure {
-        type: typeof AUTH_FAILURE;
-        error: string;
-    }
-
-    export interface AuthNotAuthenticated {
-        type: typeof AUTH_NOTAUTHENTICATED;
-    }
-
-    export interface SetRoleStatus {
-        type: typeof SET_ROLE_STATUS;
-        role: string;
-        hasRole: boolean;
-    }
-
-    export interface SetRoleRequestStatus {
-        type: typeof SET_ROLE_REQUEST_STATUS;
-        role: string;
-        isRequestingRole: boolean;
-    }
-
-    export type Types =
-        | AuthLoading
-        | AuthSuccess
-        | AuthFailure
-        | AuthNotAuthenticated
-        | SetRoleStatus
-        | SetRoleRequestStatus;
-
-    export const plainActions = {
-        authLoading: (): AuthLoading => ({
-            type: AUTH_LOADING,
-        }),
-        authSuccess: (account: Account): AuthSuccess => ({
-            type: AUTH_SUCCESS,
-            account,
-        }),
-        authFailure: (error: string): AuthFailure => ({
-            type: AUTH_FAILURE,
-            error,
-        }),
-        authNotAuthenticated: (): AuthNotAuthenticated => ({
-            type: AUTH_NOTAUTHENTICATED,
-        }),
-        setRoleStatus: (role: string, hasRole: boolean): SetRoleStatus => ({
-            type: SET_ROLE_STATUS,
-            role,
-            hasRole,
-        }),
-        setRoleRequestStatus: (role: string, isRequestingRole: boolean): SetRoleRequestStatus => ({
-            type: SET_ROLE_REQUEST_STATUS,
-            role,
-            isRequestingRole,
-        }),
-    };
+    export type Type = ActionType<typeof Actions>;
 }

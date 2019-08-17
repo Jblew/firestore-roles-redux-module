@@ -22,14 +22,16 @@
     "lodash": "^4.17.15",
     "ow": "^0.13.2",
     "redux": "^4.0.4",
-    "redux-dynamic-modules": "^5.0.2"
+    "redux-dynamic-modules": "^5.0.2",
+    "typesafe-actions": "^4.4.2"
   },
   "devDependencies": {
     "@types/lodash": "^4.14.136",
     "jblew-tslint-config": "^0.1.0",
     "semantic-release": "^15.13.19",
     "tslint": "^5.18.0",
-    "typescript": "^3.4.3"
+    "typescript": "^3.4.3",
+    "utility-types": "^3.7.0"
   },
   "release": {
     "branch": "master"

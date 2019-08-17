@@ -18,5 +18,5 @@ export namespace EpicActions {
         role: string;
     }
 
-    export type Types = LogoutAction | CheckRoleAction;
+    export type Type = LogoutAction | CheckRoleAction;
 }
