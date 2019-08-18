@@ -7,7 +7,6 @@ import { AuthState } from "../AuthState";
 import { PlainActions } from "./actions/PlainActions";
 import { State } from "./State";
 import { RootAction } from "./types";
-import { EpicActions } from "./actions/EpicActions";
 
 export function configureReducer() {
     const authState = createReducer<AuthState>(AuthState.NOTAUTHENTICATED) //
