@@ -8,41 +8,36 @@ import { PlainActions } from "./actions/PlainActions";
 import { State } from "./State";
 import { RootAction } from "./types";
 
-export function configureReducer() {
-    const authState = createReducer<AuthState>(AuthState.NOTAUTHENTICATED) //
+function authStateReducer() {
+    return createReducer<AuthState>(AuthState.NOTAUTHENTICATED) //
         .handleAction(PlainActions.Actions.authLoading, () => AuthState.LOADING)
         .handleAction(PlainActions.Actions.authNotAuthenticated, () => AuthState.NOTAUTHENTICATED)
         .handleAction(PlainActions.Actions.authSuccess, () => AuthState.AUTHENTICATED);
+}
 
-    const account = createReducer<Account | null>(null) //
+function accountReducer() {
+    return createReducer<Account | null>(null) //
         .handleAction([PlainActions.Actions.authNotAuthenticated, PlainActions.Actions.authFailure], () => null)
         .handleAction(PlainActions.Actions.authSuccess, (state, action) => action.payload);
+}
 
-    const roles = createReducer<{ [roleName: string]: boolean }>({}) //
-        .handleAction(
-            [PlainActions.Actions.authNotAuthenticated, PlainActions.Actions.authSuccess],
-            (state, action) => ({}),
-        )
-        .handleAction(PlainActions.Actions.setRoleStatus, (state, action) => ({
+function roleRelatedReducer(
+    setterAction: typeof PlainActions.Actions.setRoleStatus | typeof PlainActions.Actions.setRoleRequestStatus,
+) {
+    return createReducer<{ [roleName: string]: boolean }>({}) //
+        .handleAction([PlainActions.Actions.authNotAuthenticated, PlainActions.Actions.authSuccess], () => ({}))
+        .handleAction(setterAction, (state, action) => ({
             ...state,
-            [action.payload.role]: action.payload.hasRole,
+            [action.payload.role]: action.payload.is,
         }));
+}
 
-    const roleRequests = createReducer<{ [roleName: string]: boolean }>({}) //
-        .handleAction(
-            [PlainActions.Actions.authNotAuthenticated, PlainActions.Actions.authSuccess],
-            (state, action) => ({}),
-        )
-        .handleAction(PlainActions.Actions.setRoleRequestStatus, (state, action) => ({
-            ...state,
-            [action.payload.role]: action.payload.isRequestingRole,
-        }));
-
+export function configureReducer() {
     const rootReducer = combineReducers<State, RootAction>({
-        state: authState,
-        account,
-        roles,
-        roleRequests,
+        state: authStateReducer(),
+        account: accountReducer(),
+        roles: roleRelatedReducer(PlainActions.Actions.setRoleStatus),
+        roleRequests: roleRelatedReducer(PlainActions.Actions.setRoleRequestStatus),
     });
     return rootReducer;
 }

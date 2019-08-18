@@ -15,12 +15,11 @@ export namespace PlainActions {
         export const authSuccess = createAction(AUTH_SUCCESS, action => (account: Account) => action(account));
         export const authFailure = createAction(AUTH_FAILURE, action => (error: string) => action(error));
         export const authNotAuthenticated = createAction(AUTH_NOTAUTHENTICATED, action => () => action());
-        export const setRoleStatus = createAction(SET_ROLE_STATUS, action => (role: string, hasRole: boolean) =>
-            action({ role, hasRole }),
+        export const setRoleStatus = createAction(SET_ROLE_STATUS, action => (role: string, is: boolean) =>
+            action({ role, is }),
         );
-        export const setRoleRequestStatus = createAction(
-            SET_ROLE_STATUS,
-            action => (role: string, isRequestingRole: boolean) => action({ role, isRequestingRole }),
+        export const setRoleRequestStatus = createAction(SET_ROLE_STATUS, action => (role: string, is: boolean) =>
+            action({ role, is }),
         );
     }
 
