@@ -5,6 +5,7 @@ const {
 
 module.exports = {
     "testRegex": ".*\\.test\\.tsx?$",
+    "verbose": false,
     "roots": [
         "<rootDir>/src"
     ],
