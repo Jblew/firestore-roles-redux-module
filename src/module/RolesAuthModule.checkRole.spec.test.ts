@@ -1,7 +1,6 @@
 import * as _ from "lodash";
 
-import { PlainActions } from "./actions/PlainActions";
-import { expectActionDispatched, mock } from "./RolesAuthModule.mocks.test";
+import { mock } from "./RolesAuthModule.mocks.test";
 
 describe("RolesAuthModule", () => {
     describe("#checkRole", () => {
@@ -17,21 +16,11 @@ describe("RolesAuthModule", () => {
         /**
          * Domain language
          */
-        const dispatchCheckRoleInMock = () => m.storeMock.dispatch<any>(m.raModule.actions.checkRole(role));
         const dispatchCheckRoleInStore = () => m.store.dispatch<any>(m.raModule.actions.checkRole(role));
 
         /**
          * Tests
          */
-        /*it("Dispatches setRoleStatus action", async () => {
-            await dispatchCheckRoleInMock();
-            expectActionDispatched(m, PlainActions.SET_ROLE_STATUS);
-        });
-
-        it("Dispatches setRoleRequestStatus action", async () => {
-            await dispatchCheckRoleInMock();
-            expectActionDispatched(m, PlainActions.SET_ROLE_REQUEST_STATUS);
-        });*/
 
         it("Calls rolesAdapter.hasRole", async () => {
             await dispatchCheckRoleInStore();
