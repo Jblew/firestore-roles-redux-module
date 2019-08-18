@@ -1,6 +1,6 @@
 {
   "name": "firestore-roles-redux-module",
-  "description": "Dynamic redux module for auth using firebase auth and firestore-roles system",
+  "description": "Redux module for auth using firebase auth and firestore-roles system",
   "version": "0.0.0-development",
   "scripts": {
     "check": "if echo \"$(node --version)\" | grep -q \"$(cat .nvmrc)\"; then echo \"Node version correct\"; else echo \"Node version does not match that in .nvmrc\" && exit 1; fi",
@@ -50,7 +50,7 @@
     "url": "https://github.com/Jblew/firestore-roles-redux-module"
   },
   "keywords": [
-    "reac",
+    "react",
     "redux",
     "firebase",
     "firestore",
