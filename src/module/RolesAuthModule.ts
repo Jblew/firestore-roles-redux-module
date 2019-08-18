@@ -1,6 +1,8 @@
 import * as firebase from "firebase/app";
 
 import { Account as _Account } from "../Account";
+import { AuthAdapter } from "../adapter/AuthAdapter";
+import { RolesAdapter } from "../adapter/RolesAdapter";
 import { AuthState as _AuthState } from "../AuthState";
 import { Configuration } from "../Configuration";
 
@@ -21,7 +23,10 @@ export namespace RolesAuthModule {
         firebaseAuth: firebase.auth.Auth,
         firestore: firebase.firestore.Firestore,
     ) {
-        const publicActions = new EpicActionsImpl(config, firebaseAuth, firestore);
+        const rolesAdapter = new RolesAdapter(config, firestore);
+        const authAdapter = new AuthAdapter(firebaseAuth);
+
+        const publicActions = new EpicActionsImpl(config, rolesAdapter, authAdapter);
         return {
             reducer: rootReducer,
             actions: publicActions,

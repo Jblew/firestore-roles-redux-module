@@ -8,6 +8,7 @@
     "build:lint": "tslint -c tslint.json -p tsconfig.lint.json",
     "build:node": "tsc",
     "build": "npm run check && npm run build:cleanbefore && npm run build:node && npm run build:lint",
+    "test": "jest",
     "lint-fix": "tslint --fix -c tslint.json -p tsconfig.lint.json",
     "semantic-release": "semantic-release"
   },
@@ -26,9 +27,12 @@
     "typesafe-actions": "^4.4.2"
   },
   "devDependencies": {
+    "@types/jest": "^24.0.17",
     "@types/lodash": "^4.14.136",
     "jblew-tslint-config": "^0.1.0",
+    "jest": "^24.9.0",
     "semantic-release": "^15.13.19",
+    "ts-jest": "^24.0.2",
     "tslint": "^5.18.0",
     "typescript": "^3.4.3",
     "utility-types": "^3.7.0"
