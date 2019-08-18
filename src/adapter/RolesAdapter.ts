@@ -1,3 +1,4 @@
+/* istanbul ignore file */
 // tslint:disable member-ordering
 import FirestoreRoles, { AccountRecord } from "firestore-roles";
 import * as _ from "lodash";

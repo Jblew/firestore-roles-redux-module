@@ -1,4 +1,5 @@
-// tslint:disable:ordered-imports
+/* istanbul ignore file */
+
 import * as firebase from "firebase/app";
 
 export class AuthAdapter {
