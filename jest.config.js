@@ -4,7 +4,7 @@ const {
 
 
 module.exports = {
-    "testRegex": ".*\\.test\\.tsx?$",
+    "testRegex": ".*\\.spec\\.test\\.tsx?$",
     "verbose": false,
     "roots": [
         "<rootDir>/src"
