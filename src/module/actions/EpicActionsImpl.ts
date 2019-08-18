@@ -63,7 +63,7 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
     }
 
     public checkRole(role: string) {
-        const validateInput = (inputRole: string, account: object | undefined) => {
+        const validateInput = (inputRole: string, account: object | null) => {
             ow(inputRole, "role", ow.string.nonEmpty);
             if (!account) throw new Error("Cannot get role before authentication");
         };

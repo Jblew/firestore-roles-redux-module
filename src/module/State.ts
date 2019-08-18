@@ -6,7 +6,7 @@ import { ow_catch } from "../util";
 
 export interface State {
     state: AuthState;
-    account?: Account;
+    account: Account | null;
     roles: {
         [roleName: string]: boolean;
     };
@@ -26,7 +26,7 @@ export namespace State {
         ow(
             state.account,
             "state.account",
-            ow.any(ow.undefined, ow.object.is(v => ow_catch(() => Account.validate(v as Account)))),
+            ow.any(ow.null, ow.object.is(v => ow_catch(() => Account.validate(v as Account)))),
         );
 
         ow(state.roles, "state.roles", ow.object.valuesOfType(ow.boolean));
