@@ -26,7 +26,7 @@ export namespace RolesAuthModule {
         const rolesAdapter = new RolesAdapter(config, firestore);
         const authAdapter = new AuthAdapter(firebaseAuth);
 
-        const publicActions = new EpicActionsImpl(config, rolesAdapter, authAdapter);
+        const publicActions = new EpicActionsImpl(config.callbacks, rolesAdapter, authAdapter);
         return {
             reducer: rootReducer,
             actions: publicActions,

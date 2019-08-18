@@ -14,23 +14,30 @@ import { PlainActions } from "./PlainActions";
 import { PrivateEpicActions } from "./PrivateEpicActions";
 
 export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
-    private config: Configuration;
+    private callbacks: Configuration.AuthCallbacks;
     private rolesAdapter: RolesAdapter;
     private authAdapter: AuthAdapter;
 
-    public constructor(config: Configuration, auth: firebase.auth.Auth, firestore: firebase.firestore.Firestore) {
-        this.config = config;
-        this.rolesAdapter = new RolesAdapter(config, firestore);
-        this.authAdapter = new AuthAdapter(auth);
+    public constructor(callbacks: Configuration.AuthCallbacks, rolesAdapter: RolesAdapter, authAdapter: AuthAdapter) {
+        this.callbacks = callbacks;
+        this.rolesAdapter = rolesAdapter;
+        this.authAdapter = authAdapter;
     }
 
     public initialize() {
+        const onAuthenticated = (dispatch: Dispatch, user: firebase.UserInfo) => {
+            const account = Account.fromFirebaseUserInfo(user);
+
+            dispatch<any>(this.ensureAccountRegistered(account));
+            dispatch(PlainActions.Actions.authSuccess(account));
+        };
+
         return (dispatch: Dispatch, getState: () => State) => {
             console.log("initialize action, getState(): ", getState());
             dispatch(PlainActions.Actions.authLoading());
 
             this.authAdapter.initialize({
-                onAuthenticated: user => this.onAuthenticated(dispatch, user),
+                onAuthenticated: user => onAuthenticated(dispatch, user),
                 onNotAuthenticated: () => dispatch(PlainActions.Actions.authNotAuthenticated()),
                 onError: msg => dispatch(PlainActions.Actions.authFailure(msg)),
             });
@@ -56,7 +63,7 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
 
     public checkRole(role: string) {
         const validateInput = (inputRole: string, account: object | undefined) => {
-            ow(inputRole, "role", ow.string.oneOf(_.keys(this.config.roles.roles)));
+            ow(inputRole, "role", ow.string.nonEmpty);
             if (!account) throw new Error("Cannot get role before authentication");
         };
 
@@ -82,7 +89,7 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
                         dispatch(PlainActions.Actions.setRoleRequestStatus(role, isRequestingRole));
                     }
                 } catch (error) {
-                    this.config.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
+                    this.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
                 }
             })();
             return this.checkRoleActionIntent(role);
@@ -102,18 +109,11 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
                 try {
                     await doEnsureRegistered(account);
                 } catch (error) {
-                    this.config.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
+                    this.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
                 }
             })();
             return this.ensureAccountRegisteredActionIntent(account);
         };
-    }
-
-    private onAuthenticated(dispatch: Dispatch, user: firebase.UserInfo) {
-        const account = Account.fromFirebaseUserInfo(user);
-
-        dispatch<any>(this.ensureAccountRegistered(account));
-        dispatch(PlainActions.Actions.authSuccess(account));
     }
 
     /**
