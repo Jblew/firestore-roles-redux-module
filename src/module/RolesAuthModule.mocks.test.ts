@@ -1,6 +1,7 @@
 import { FirestoreRolesConfiguration } from "firestore-roles";
 import * as _ from "lodash";
 import { applyMiddleware, combineReducers, createStore, Reducer } from "redux";
+import logger from "redux-logger";
 import configureStore from "redux-mock-store";
 
 import { AuthAdapter } from "../adapter/AuthAdapter";
@@ -10,6 +11,8 @@ import thunk, { ThunkMiddleware } from "../thunk";
 
 import { EpicActionsImpl } from "./actions/EpicActionsImpl";
 import { getModuleWithAdapters, RolesAuthModule } from "./RolesAuthModule";
+
+const log = false;
 
 const rolesConfig: FirestoreRolesConfiguration = FirestoreRolesConfiguration.DEFAULT;
 function createStoreWithModule(
@@ -22,7 +25,8 @@ function createStoreWithModule(
     const rootReducer = combineReducers({
         rolesAuth: raModule.reducer,
     });
-    return createStore(rootReducer, initialState, applyMiddleware<ThunkMiddleware>(thunk));
+    const middleware = log ? applyMiddleware<ThunkMiddleware>(thunk, logger) : applyMiddleware<ThunkMiddleware>(thunk);
+    return createStore(rootReducer, initialState, middleware);
 }
 
 export function mock(initialState?: any) {
