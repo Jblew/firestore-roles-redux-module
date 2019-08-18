@@ -22,6 +22,8 @@ describe("RolesAuthModule", () => {
         const expectAuthState = (state: AuthState) => expect(m.store.getState().rolesAuth.state).toEqual(state);
         const expectActionDispatched = (actionType: string) =>
             expect(m.storeMock.getActions().map(a => a.type)).toContainEqual(actionType);
+        const expectAccountNotSet = () => expect(m.store.getState().rolesAuth.account).toBeNull();
+        const expectAccountUidEqual = (uid: any) => expect(m.store.getState().rolesAuth.account!.uid).toEqual(uid);
 
         const testStorePropertyReset = async (propertyPath: string, initialValue: boolean) => {
             m = mock(_.set({}, propertyPath, initialValue));
@@ -69,7 +71,7 @@ describe("RolesAuthModule", () => {
 
             it("Sets account", async () => {
                 await dispatchInitializeInStore();
-                expect(m.store.getState().rolesAuth.account!.uid).toEqual(m.sampleAccount.uid);
+                expectAccountUidEqual(m.sampleAccount.uid);
             });
 
             it("Sets auth state to authenticated", async () => {
@@ -100,10 +102,10 @@ describe("RolesAuthModule", () => {
             it("Resets account", async () => {
                 m = mock({ rolesAuth: { account: { uid: 1 } } });
                 m.authAdapter.initialize = async callbacks => callbacks.onNotAuthenticated();
-                expect(m.store.getState().rolesAuth.account!.uid).toEqual(1);
+                expectAccountUidEqual(1);
                 await dispatchInitializeInStore();
 
-                expect(m.store.getState().rolesAuth.account).toBeNull();
+                expectAccountNotSet();
             });
 
             it("Sets auth state to notauthenticated", async () => {
@@ -133,10 +135,9 @@ describe("RolesAuthModule", () => {
 
             it("Does not reset account", async () => {
                 await m.store.dispatch(PlainActions.Actions.authSuccess(m.sampleAccount));
-                expect(m.store.getState().rolesAuth.account!.uid).toEqual(m.sampleAccount.uid);
+                expectAccountUidEqual(m.sampleAccount.uid);
                 await dispatchInitializeInStore();
-
-                expect(m.store.getState().rolesAuth.account!.uid).toEqual(m.sampleAccount.uid);
+                expectAccountUidEqual(m.sampleAccount.uid);
             });
 
             it("Calls callbacks.onError", async () => {
