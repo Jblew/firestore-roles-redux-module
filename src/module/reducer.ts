@@ -17,7 +17,7 @@ function authStateReducer() {
 
 function accountReducer() {
     return createReducer<Account | null>(null) //
-        .handleAction([PlainActions.Actions.authNotAuthenticated, PlainActions.Actions.authFailure], () => null)
+        .handleAction(PlainActions.Actions.authNotAuthenticated, () => null)
         .handleAction(PlainActions.Actions.authSuccess, (state, action) => action.payload);
 }
 
