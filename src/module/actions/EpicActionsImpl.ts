@@ -9,7 +9,6 @@ import { RolesAdapter } from "../../adapter/RolesAdapter";
 import { Configuration } from "../../Configuration";
 import { ThunkDispatch } from "../../thunk";
 import { ContainingStoreState } from "../ContainingStoreState";
-import { State } from "../State";
 
 import { EpicActions } from "./EpicActions";
 import { PlainActions } from "./PlainActions";
@@ -32,16 +31,26 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
 
             dispatch(this.ensureAccountRegistered(account));
             dispatch(PlainActions.Actions.authSuccess(account));
+            this.callbacks.onAuthenticated(account);
+        };
+
+        const onNotAuthenticated = (dispatch: ThunkDispatch) => {
+            dispatch(PlainActions.Actions.authNotAuthenticated());
+            this.callbacks.onNotAuthenticated();
+        };
+
+        const onError = (dispatch: ThunkDispatch, msg: string) => {
+            dispatch(PlainActions.Actions.authFailure(msg));
+            this.callbacks.onError(msg);
         };
 
         return async (dispatch: Dispatch, getState: () => ContainingStoreState) => {
-            console.log("initialize action, getState(): ", getState());
             dispatch(PlainActions.Actions.authLoading());
 
             await this.authAdapter.initialize({
                 onAuthenticated: user => onAuthenticated(dispatch, user),
-                onNotAuthenticated: () => dispatch(PlainActions.Actions.authNotAuthenticated()),
-                onError: msg => dispatch(PlainActions.Actions.authFailure(msg)),
+                onNotAuthenticated: () => onNotAuthenticated(dispatch),
+                onError: msg => onError(dispatch, msg),
             });
 
             return this.initializeActionIntent();
