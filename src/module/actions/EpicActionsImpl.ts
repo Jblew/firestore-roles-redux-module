@@ -64,8 +64,9 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
                 await this.authAdapter.signOut();
                 dispatch(PlainActions.Actions.authNotAuthenticated());
             } catch (error) {
-                console.error(error);
-                dispatch(PlainActions.Actions.authFailure(`Could not log out: ${error.message}`));
+                const errMsg = `Could not log out: ${error.message}`;
+                dispatch(PlainActions.Actions.authFailure(errMsg));
+                this.callbacks.onError(errMsg);
             }
             return this.logoutActionIntent();
         };
