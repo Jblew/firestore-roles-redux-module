@@ -44,6 +44,8 @@ export function mock(initialState?: any) {
     const raModule = getModuleWithAdapters(config, rolesAdapter, authAdapter);
     const store = createStoreWithModule(initialState || {}, raModule);
     const storeMock = configureStore([thunk])();
+
+    const sampleAccount = getSampleFirebaseAccount();
     return {
         storeMock,
         store,
@@ -51,6 +53,7 @@ export function mock(initialState?: any) {
         rolesAdapter,
         raModule,
         callbacks,
+        sampleAccount,
     };
 }
 

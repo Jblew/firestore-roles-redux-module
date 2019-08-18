@@ -3,20 +3,18 @@ import * as _ from "lodash";
 import { AuthState } from "../AuthState";
 
 import { PlainActions } from "./actions/PlainActions";
-import { getSampleFirebaseAccount, mock } from "./RolesAuthModule.mocks.test";
+import { mock } from "./RolesAuthModule.mocks.test";
 
 describe("RolesAuthModule", () => {
     describe("#initialize", () => {
-        let sampleAccount: firebase.UserInfo;
         let m: ReturnType<typeof mock>;
         beforeEach(async () => {
-            sampleAccount = getSampleFirebaseAccount();
             m = mock();
             m.authAdapter.initialize = jest.fn();
         });
 
         /**
-         * Domain lang
+         * Domain language
          */
         const dispatchInitializeInMock = () => m.storeMock.dispatch<any>(m.raModule.actions.initialize());
         const dispatchInitializeInStore = () => m.store.dispatch<any>(m.raModule.actions.initialize());
@@ -55,7 +53,7 @@ describe("RolesAuthModule", () => {
 
         describe("onAuthenticated", () => {
             beforeEach(() => {
-                m.authAdapter.initialize = async callbacks => callbacks.onAuthenticated(sampleAccount);
+                m.authAdapter.initialize = async callbacks => callbacks.onAuthenticated(m.sampleAccount);
             });
 
             it("Dispatches authSuccess", async () => {
@@ -71,7 +69,7 @@ describe("RolesAuthModule", () => {
 
             it("Sets account", async () => {
                 await dispatchInitializeInStore();
-                expect(m.store.getState().rolesAuth.account!.uid).toEqual(sampleAccount.uid);
+                expect(m.store.getState().rolesAuth.account!.uid).toEqual(m.sampleAccount.uid);
             });
 
             it("Sets auth state to authenticated", async () => {
@@ -134,11 +132,11 @@ describe("RolesAuthModule", () => {
             });
 
             it("Does not reset account", async () => {
-                await m.store.dispatch(PlainActions.Actions.authSuccess(sampleAccount));
-                expect(m.store.getState().rolesAuth.account!.uid).toEqual(sampleAccount.uid);
+                await m.store.dispatch(PlainActions.Actions.authSuccess(m.sampleAccount));
+                expect(m.store.getState().rolesAuth.account!.uid).toEqual(m.sampleAccount.uid);
                 await dispatchInitializeInStore();
 
-                expect(m.store.getState().rolesAuth.account!.uid).toEqual(sampleAccount.uid);
+                expect(m.store.getState().rolesAuth.account!.uid).toEqual(m.sampleAccount.uid);
             });
 
             it("Calls callbacks.onError", async () => {
