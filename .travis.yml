@@ -12,3 +12,10 @@ script:
     - npm run build
     - npm run test
 
+deploy:
+    - provider: script
+      script: npx semantic-release
+      skip_cleanup: true
+      on:
+          tags: false
+          branch: master
