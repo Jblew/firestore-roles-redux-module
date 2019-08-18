@@ -7,6 +7,8 @@ import { Account } from "../../Account";
 import { AuthAdapter } from "../../adapter/AuthAdapter";
 import { RolesAdapter } from "../../adapter/RolesAdapter";
 import { Configuration } from "../../Configuration";
+import { ThunkDispatch } from "../../thunk";
+import { ContainingStoreState } from "../ContainingStoreState";
 import { State } from "../State";
 
 import { EpicActions } from "./EpicActions";
@@ -25,38 +27,37 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
     }
 
     public initialize() {
-        const onAuthenticated = (dispatch: Dispatch, user: firebase.UserInfo) => {
+        const onAuthenticated = (dispatch: ThunkDispatch, user: firebase.UserInfo) => {
             const account = Account.fromFirebaseUserInfo(user);
 
-            dispatch<any>(this.ensureAccountRegistered(account));
+            dispatch(this.ensureAccountRegistered(account));
             dispatch(PlainActions.Actions.authSuccess(account));
         };
 
-        return (dispatch: Dispatch, getState: () => State) => {
+        return async (dispatch: Dispatch, getState: () => ContainingStoreState) => {
             console.log("initialize action, getState(): ", getState());
             dispatch(PlainActions.Actions.authLoading());
 
-            this.authAdapter.initialize({
+            await this.authAdapter.initialize({
                 onAuthenticated: user => onAuthenticated(dispatch, user),
                 onNotAuthenticated: () => dispatch(PlainActions.Actions.authNotAuthenticated()),
                 onError: msg => dispatch(PlainActions.Actions.authFailure(msg)),
             });
+
             return this.initializeActionIntent();
         };
     }
 
     public logout() {
-        return (dispatch: Dispatch) => {
+        return async (dispatch: Dispatch) => {
             dispatch(PlainActions.Actions.authLoading());
-            (async () => {
-                try {
-                    await this.authAdapter.signOut();
-                    dispatch(PlainActions.Actions.authNotAuthenticated());
-                } catch (error) {
-                    console.error(error);
-                    dispatch(PlainActions.Actions.authFailure(`Could not log out: ${error.message}`));
-                }
-            })();
+            try {
+                await this.authAdapter.signOut();
+                dispatch(PlainActions.Actions.authNotAuthenticated());
+            } catch (error) {
+                console.error(error);
+                dispatch(PlainActions.Actions.authFailure(`Could not log out: ${error.message}`));
+            }
             return this.logoutActionIntent();
         };
     }
@@ -75,23 +76,21 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
             return await this.rolesAdapter.isRoleRequestedByUser(uid, role);
         };
 
-        return (dispatch: Dispatch, getState: () => State) => {
+        return async (dispatch: Dispatch, getState: () => ContainingStoreState) => {
             const state = getState();
-            (async () => {
-                try {
-                    validateInput(role, state.account);
+            try {
+                validateInput(role, state.rolesAuth.account);
 
-                    const hasRole = await doCheckRole(state.account!.uid);
-                    dispatch(PlainActions.Actions.setRoleStatus(role, hasRole));
+                const hasRole = await doCheckRole(state.rolesAuth.account!.uid);
+                dispatch(PlainActions.Actions.setRoleStatus(role, hasRole));
 
-                    if (!hasRole) {
-                        const isRequestingRole = await doCheckRoleRequest(state.account!.uid);
-                        dispatch(PlainActions.Actions.setRoleRequestStatus(role, isRequestingRole));
-                    }
-                } catch (error) {
-                    this.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
+                if (!hasRole) {
+                    const isRequestingRole = await doCheckRoleRequest(state.rolesAuth.account!.uid);
+                    dispatch(PlainActions.Actions.setRoleRequestStatus(role, isRequestingRole));
                 }
-            })();
+            } catch (error) {
+                this.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
+            }
             return this.checkRoleActionIntent(role);
         };
     }
@@ -104,14 +103,12 @@ export class EpicActionsImpl implements EpicActions, PrivateEpicActions {
             }
         };
 
-        return (dispatch: Dispatch) => {
-            (async () => {
-                try {
-                    await doEnsureRegistered(account);
-                } catch (error) {
-                    this.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
-                }
-            })();
+        return async (dispatch: Dispatch) => {
+            try {
+                await doEnsureRegistered(account);
+            } catch (error) {
+                this.callbacks.onError(`Could not ensure user is registered: ${error.message}`);
+            }
             return this.ensureAccountRegisteredActionIntent(account);
         };
     }

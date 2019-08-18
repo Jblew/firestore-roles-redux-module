@@ -8,19 +8,23 @@ export class AuthAdapter {
         this.auth = auth;
     }
 
-    public initialize(callbacks: AuthAdapter.Callbacks) {
-        this.auth.onAuthStateChanged(
-            (user: firebase.UserInfo | null) => {
-                if (user) {
-                    callbacks.onAuthenticated(user);
-                } else {
-                    callbacks.onNotAuthenticated();
-                }
-            },
-            (error: firebase.auth.Error) => {
-                callbacks.onError(error.message);
-            },
-        );
+    public initialize(callbacks: AuthAdapter.Callbacks): Promise<void> {
+        return new Promise<void>(resolve => {
+            this.auth.onAuthStateChanged(
+                (user: firebase.UserInfo | null) => {
+                    if (user) {
+                        callbacks.onAuthenticated(user);
+                    } else {
+                        callbacks.onNotAuthenticated();
+                    }
+                    resolve();
+                },
+                (error: firebase.auth.Error) => {
+                    callbacks.onError(error.message);
+                    resolve();
+                },
+            );
+        });
     }
 
     public async signOut() {

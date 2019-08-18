@@ -1,18 +1,13 @@
 // tslint:disable class-name
-import { ThunkAction } from "redux-thunk";
 
 import { Account } from "../../Account";
-import { State } from "../State";
+import { ThunkAction } from "../../thunk";
+import { ContainingStoreState } from "../ContainingStoreState";
 
 export interface PrivateEpicActions {
     ensureAccountRegistered(
         account: Account,
-    ): ThunkAction<
-        PrivateEpicActions.EnsureAccountRegisteredAction,
-        State,
-        void,
-        PrivateEpicActions.EnsureAccountRegisteredAction
-    >;
+    ): ThunkAction<Promise<PrivateEpicActions.EnsureAccountRegisteredAction>, ContainingStoreState>;
 }
 
 export namespace PrivateEpicActions {
