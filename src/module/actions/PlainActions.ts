@@ -1,4 +1,4 @@
-import { action, ActionType, createAction } from "typesafe-actions";
+import { ActionType, createAction } from "typesafe-actions";
 
 import { Account } from "../../Account";
 
@@ -11,13 +11,17 @@ export namespace PlainActions {
     export const SET_ROLE_REQUEST_STATUS = "FirestoreRolesAuthReduxModule/PlainActions/SET_ROLE_REQUEST_STATUS";
 
     export namespace Actions {
-        export const authLoading = () => action(AUTH_LOADING);
-        export const authSuccess = (account: Account) => action(AUTH_SUCCESS, account);
-        export const authFailure = (error: string) => action(AUTH_FAILURE, error);
-        export const authNotAuthenticated = () => action(AUTH_NOTAUTHENTICATED);
-        export const setRoleStatus = (role: string, hasRole: boolean) => action(SET_ROLE_STATUS, { role, hasRole });
-        export const setRoleRequestStatus = (role: string, isRequestingRole: boolean) =>
-            action(SET_ROLE_STATUS, { role, isRequestingRole });
+        export const authLoading = createAction(AUTH_LOADING, action => () => action(AUTH_LOADING));
+        export const authSuccess = createAction(AUTH_SUCCESS, action => (account: Account) => action(account));
+        export const authFailure = createAction(AUTH_FAILURE, action => (error: string) => action(error));
+        export const authNotAuthenticated = createAction(AUTH_NOTAUTHENTICATED, action => () => action());
+        export const setRoleStatus = createAction(SET_ROLE_STATUS, action => (role: string, hasRole: boolean) =>
+            action({ role, hasRole }),
+        );
+        export const setRoleRequestStatus = createAction(
+            SET_ROLE_STATUS,
+            action => (role: string, isRequestingRole: boolean) => action({ role, isRequestingRole }),
+        );
     }
 
     export type Type = ActionType<typeof Actions>;
