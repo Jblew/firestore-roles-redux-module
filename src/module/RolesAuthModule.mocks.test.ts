@@ -6,6 +6,7 @@ import configureStore from "redux-mock-store";
 
 import { AuthAdapter } from "../adapter/AuthAdapter";
 import { RolesAdapter } from "../adapter/RolesAdapter";
+import { AuthState } from "../AuthState";
 import { Configuration } from "../Configuration";
 import thunk, { ThunkMiddleware } from "../thunk";
 
@@ -68,3 +69,12 @@ export function getSampleFirebaseAccount(): firebase.UserInfo {
         phoneNumber: null,
     };
 }
+
+/**
+ * Domain language
+ */
+export const expectAuthState = (m: ReturnType<typeof mock>, state: AuthState) =>
+    expect(m.store.getState().rolesAuth.state).toEqual(state);
+
+export const expectActionDispatched = (m: ReturnType<typeof mock>, actionType: string) =>
+    expect(m.storeMock.getActions().map(a => a.type)).toContainEqual(actionType);

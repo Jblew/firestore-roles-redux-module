@@ -3,7 +3,7 @@ import * as _ from "lodash";
 import { AuthState } from "../AuthState";
 
 import { PlainActions } from "./actions/PlainActions";
-import { mock } from "./RolesAuthModule.mocks.test";
+import { expectActionDispatched, expectAuthState, mock } from "./RolesAuthModule.mocks.test";
 
 describe("RolesAuthModule", () => {
     describe("#initialize", () => {
@@ -19,9 +19,6 @@ describe("RolesAuthModule", () => {
         const dispatchInitializeInMock = () => m.storeMock.dispatch<any>(m.raModule.actions.initialize());
         const dispatchInitializeInStore = () => m.store.dispatch<any>(m.raModule.actions.initialize());
 
-        const expectAuthState = (state: AuthState) => expect(m.store.getState().rolesAuth.state).toEqual(state);
-        const expectActionDispatched = (actionType: string) =>
-            expect(m.storeMock.getActions().map(a => a.type)).toContainEqual(actionType);
         const expectAccountNotSet = () => expect(m.store.getState().rolesAuth.account).toBeNull();
         const expectAccountUidEqual = (uid: any) => expect(m.store.getState().rolesAuth.account!.uid).toEqual(uid);
 
@@ -49,7 +46,7 @@ describe("RolesAuthModule", () => {
 
             it("Sets auth state to loading", async () => {
                 await dispatchInitializeInStore();
-                expectAuthState(AuthState.LOADING);
+                expectAuthState(m, AuthState.LOADING);
             });
         });
 
@@ -60,7 +57,7 @@ describe("RolesAuthModule", () => {
 
             it("Dispatches authSuccess", async () => {
                 await dispatchInitializeInMock();
-                expectActionDispatched(PlainActions.AUTH_SUCCESS);
+                expectActionDispatched(m, PlainActions.AUTH_SUCCESS);
             });
 
             it("calls #ensureAccountRegistered", async () => {
@@ -76,7 +73,7 @@ describe("RolesAuthModule", () => {
 
             it("Sets auth state to authenticated", async () => {
                 await dispatchInitializeInStore();
-                expectAuthState(AuthState.AUTHENTICATED);
+                expectAuthState(m, AuthState.AUTHENTICATED);
             });
 
             it("Calls callbacks.onAuthenticated", async () => {
@@ -96,7 +93,7 @@ describe("RolesAuthModule", () => {
 
             it("Dispatches authNotAuthenticated", async () => {
                 await dispatchInitializeInMock();
-                expectActionDispatched(PlainActions.AUTH_NOTAUTHENTICATED);
+                expectActionDispatched(m, PlainActions.AUTH_NOTAUTHENTICATED);
             });
 
             it("Resets account", async () => {
@@ -110,7 +107,7 @@ describe("RolesAuthModule", () => {
 
             it("Sets auth state to notauthenticated", async () => {
                 await dispatchInitializeInStore();
-                expectAuthState(AuthState.NOTAUTHENTICATED);
+                expectAuthState(m, AuthState.NOTAUTHENTICATED);
             });
 
             it("Calls callbacks.onNotAuthenticated", async () => {
@@ -130,7 +127,7 @@ describe("RolesAuthModule", () => {
 
             it("Dispatches authFailure", async () => {
                 await dispatchInitializeInMock();
-                expectActionDispatched(PlainActions.AUTH_FAILURE);
+                expectActionDispatched(m, PlainActions.AUTH_FAILURE);
             });
 
             it("Does not reset account", async () => {
