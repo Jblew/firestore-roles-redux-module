@@ -18,8 +18,9 @@ export namespace PlainActions {
         export const setRoleStatus = createAction(SET_ROLE_STATUS, action => (role: string, is: boolean) =>
             action({ role, is }),
         );
-        export const setRoleRequestStatus = createAction(SET_ROLE_STATUS, action => (role: string, is: boolean) =>
-            action({ role, is }),
+        export const setRoleRequestStatus = createAction(
+            SET_ROLE_REQUEST_STATUS,
+            action => (role: string, is: boolean) => action({ role, is }),
         );
     }
 
